@@ -1,6 +1,6 @@
 # MUSES: Efficient Multi-User Searchable Encrypted Database
 
-This is our full implementation for our [MUSES paper].
+This is our full implementation for our [MUSES paper](https://eprint.iacr.org/2023/720).
 
 **WARNING**: This is an academic proof-of-concept prototype and has not received careful code review. This implementation is NOT ready for production use.
 
