@@ -5,7 +5,7 @@ const int P           = 10;
 const int E           = 6;
 const int MAX_E       = 6;
 const int N           = 512;
-const int N_S         = 16384;
+const int N_S         = 256;
 const int K           = 7;
 const int MAX_THREADS = 8;
 
