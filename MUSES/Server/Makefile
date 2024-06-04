@@ -7,6 +7,8 @@ OPENSSL_LIB=-L/usr/local/lib/
 DEPS=$(ZEROMQ_LIB) $(GMP_LIB) $(OPENSSL_LIB) $(SECP256K1_LIB) $(NTL_LIB)
 LIBS=-lzmq -lgmp -lm -lcrypto -lntl -lgmp -lgmpxx 
 
+.PHONY: Server all clean
+
 Server: Server.cpp
 	g++ *.cpp -o Server -I./ -I../ -I../secp256k1_lib -I../emp_lib -I/usr/local/include -L/usr/local/lib -lzmq -lcrypto -pthread -Wall -funroll-loops -Wno-ignored-attributes -Wno-unused-result -march=native -maes -mavx2 -std=c++11 -O3 $(DEPS) $(LIBS)
 
