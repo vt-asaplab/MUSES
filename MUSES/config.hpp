@@ -5,7 +5,7 @@ const int P           = 10;
 const int E           = 6;
 const int MAX_E       = 6;
 const int N           = 512;
-const int N_S         = 256;
+const int N_S         = 256;  // N_S <= 0.25 * #Documents
 const int K           = 7;
 const int MAX_THREADS = 8;
 
