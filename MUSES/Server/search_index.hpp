@@ -175,7 +175,7 @@ void init_encrypted_search_index() {
 	
 	delete [] search_index[wid];
     }
-    
+
     delete [] search_index;
 }
 
