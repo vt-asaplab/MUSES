@@ -182,7 +182,7 @@ void test_keyword_search() {
 
     uint16_t **padded_data = new uint16_t*[num_writers];
     for(int i = 0; i < num_writers; ++i)
-        padded_data[i] = new uint16_t[num_documents];
+        padded_data[i] = new uint16_t[num_documents + N_S];
     
     modp_t *temp_data[nP];
     for(int i = 0; i < nP; ++i) 
