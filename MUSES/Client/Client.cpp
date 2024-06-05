@@ -15,12 +15,13 @@ int             num_writers;
 int             bloom_filter_size;
 int             num_documents;
 uint8_t         **writer_secret_keys;
+uint64_t        bandwidth;
 
 std::random_device rd;
 std::mt19937       gen(rd());
-std::uniform_int_distribution<modp_t> dis(0, 1);
+MPKey              mp_keys[K][nP];
 
-MPKey mp_keys[K][nP];
+std::uniform_int_distribution<modp_t> dis(0, 1);
 
 void share(poly_modq_t key, poly_modq_t *shared_keys) {
     PRG prg;
@@ -441,7 +442,10 @@ void test_keyword_search() {
             else generate_keypair(BF_index[i], 1, key[0][i], key[1][i]);
         }
         // delete [] sum;
-                
+
+		// For measuring bandwidth
+        bandwidth = 0;
+
         for(int i = 0; i < num_parties; ++i) {
             works.push_back(pool.enqueue([i, key, BF_index, mp_keys]() {
                 // Note: sending indices just for debugging purpose
@@ -451,6 +455,11 @@ void test_keyword_search() {
                     uint64_t mu = (uint64_t)ceil((pow(2, n/2.0) * pow(2,(num_parties-1)/2.0)));
                     uint64_t v  = (uint64_t)ceil((pow(2, n))/mu);
 
+					// For measuring bandwidth
+                    if(i == 0) {
+                        bandwidth += K * (p2*mu*sizeof(modp_t) + v*p2*sizeof(block) + v*p2*sizeof(modp_t)) * num_parties;
+                    }
+					
                     zmq::message_t msg_fss_keys(K * (p2*mu*sizeof(modp_t) + v*p2*sizeof(block) + v*p2*sizeof(modp_t)) + K * sizeof(int));
                     uint8_t *msg_fss_keys_data = (uint8_t*)msg_fss_keys.data();
                     // for(int j = 0; j < K; ++j) {
@@ -482,6 +491,11 @@ void test_keyword_search() {
                     }
                     socket_client[i]->send(msg_fss_keys);
                 } else { 
+					// For measuring bandwidth
+                    if(i == 0) {
+                        bandwidth += K * sizeof(FSSKey) * num_parties;
+                    }
+					
                     zmq::message_t msg_fss_keys(K * sizeof(FSSKey) + K * sizeof(int));
                     uint8_t *msg_fss_keys_data = (uint8_t*)msg_fss_keys.data();
                     for(int j = 0; j < K; ++j) {
@@ -502,6 +516,12 @@ void test_keyword_search() {
             works.push_back(pool.enqueue([i, secret_shared_private_tokens]() {
                 zmq::message_t msg_secret_shared_keys;
                 socket_client[i]->recv(&msg_secret_shared_keys);
+
+				// For measuring bandwidth
+                if(i == 0) {
+                    bandwidth += msg_secret_shared_keys.size() * num_parties;
+                }
+				
                 uint8_t *msg_secret_shared_keys_data = (uint8_t*)msg_secret_shared_keys.data();
                 for(int j = 0; j < num_writers; ++j) {
                     for(int k = 0; k < K; ++k) {
@@ -535,6 +555,9 @@ void test_keyword_search() {
                 }
             }
             socket_client[i]->send(msg_secret_shared_keys);
+
+			// For measuring bandwidth
+            bandwidth += msg_secret_shared_keys.size();
         }
 
         // string test_msg = "test";
@@ -551,6 +574,9 @@ void test_keyword_search() {
                 zmq::message_t reply;
                 socket_client[i]->recv(&reply);
                 memcpy(s[i], reply.data(), num_writers*sizeof(uint16_t));
+
+				// For measuring bandwidth  
+                bandwidth += reply.size();
             }));
         }
         
@@ -586,6 +612,11 @@ void test_keyword_search() {
                 for(int j = 0; j < num_writers; ++j) 
                     memcpy(padding_response.data() + j * N_S * sizeof(uint16_t), padding_values[j][i], N_S*sizeof(uint16_t));
                 socket_client[i]->send(padding_response);
+
+				// For measuring bandwidth
+                if(i == 0) {
+                    bandwidth += padding_response.size() * num_parties;
+                }
             }));
         }
 
@@ -602,6 +633,12 @@ void test_keyword_search() {
                 zmq::message_t reply;
                 socket_client[i]->recv(&reply);
                 cout << "Received " << reply.size() << " bytes from server " << i << endl;
+
+				// For measuring bandwidth
+                if(i == num_parties - 1) {
+                    bandwidth += reply.size();
+                }
+				
                 uint8_t *reply_data = (uint8_t*)reply.data();
                 if(i < num_parties-1) {
                     memcpy(&permutation_seed[i], reply_data, sizeof(block));
@@ -625,6 +662,8 @@ void test_keyword_search() {
         }
         joinNclean(works);
 
+		bandwidth += (num_parties - 1) * num_writers * sizeof(block);
+		
         int n = num_documents;
         
         // for(int m = 0; m <= num_parties-2; ++m) 
@@ -667,7 +706,8 @@ void test_keyword_search() {
     }
 	
     cout << "[Keyword search] End-to-end latency (including preprocessing): " << time_from(start)/n_keyword_search_times << endl;
-    
+    cout << "[Keyword search] Bandwidth cost: " << (bandwidth/(double)1048576.0) << " MB" << endl;
+	
     for(int i = 0; i < num_writers; ++i) {
         for(int j = 0; j < nP; ++j)
             delete [] padding_values[i][j];
