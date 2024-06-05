@@ -191,7 +191,9 @@ void pk_encrypt(uint8_t *plaintext, uint8_t *ciphertext) {
     unsigned char shared_key[32];
     secp256k1_sha256 sha256;
     secp256k1_sha256_initialize(&sha256);
-    secp256k1_sha256_write(&sha256, (unsigned char*)&S, 84);
+    unsigned char out[65];
+    secp256k1_eckey_pubkey_serialize(&S, out, &size, 0);
+    secp256k1_sha256_write(&sha256, out, size);
     secp256k1_sha256_finalize(&sha256, shared_key);
     
     unsigned char *iv = (unsigned char *)"0123456789012345";
@@ -210,7 +212,10 @@ void pk_decrypt(uint8_t *ciphertext, uint8_t *plaintext) {
     unsigned char shared_key[32];
     secp256k1_sha256 sha256;
     secp256k1_sha256_initialize(&sha256);
-    secp256k1_sha256_write(&sha256, (unsigned char*)&S, 84);
+    unsigned char out[65];
+    size_t size;
+    secp256k1_eckey_pubkey_serialize(&S, out, &size, 0);
+    secp256k1_sha256_write(&sha256, out, size);
     secp256k1_sha256_finalize(&sha256, shared_key);
 
     unsigned char *iv = (unsigned char *)"0123456789012345";
