@@ -68,7 +68,7 @@ void test_secret_key_update() {
             socket_server->send(msg_ack);
         // }
 
-        cout << "[Permission revocation] Server latency: " << time_from(start) << endl;
+        cout << "[Permission revocation] Server latency: " << time_from(start) << "us" << endl;
     }
 }
 
@@ -164,7 +164,7 @@ void test_keyword_search() {
     preprocessing_shuffling(permutation_seed);
     preprocessing_counting();
     
-    cout << "[Keyword search] Preprocessing latency: " << time_from(start) << endl;
+    cout << "[Keyword search] Preprocessing latency: " << time_from(start) << "us" << endl;
     
     int n_keyword_search_times = 1; 
     FSSKey key[K];
@@ -505,7 +505,7 @@ void test_keyword_search() {
         }
     }
 
-    cout << "[Keyword search] Server latency: " << time_from(start)/n_keyword_search_times << endl;
+    cout << "[Keyword search] Server latency: " << time_from(start)/n_keyword_search_times << "us" << endl;
 
     for(int i = 0; i < K; ++i)
         delete [] data_out[i];
