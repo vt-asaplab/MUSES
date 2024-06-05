@@ -215,6 +215,7 @@ void test_secret_key_update() {
         joinNclean(works);
 
         writer_time += time_from(start);
+		
         cout << "[Permission revocation] Writer latency: " << writer_time << endl;
 		cout << "[Permission revocation] Writer bandwidth: " << nP * bloom_filter_size * (sizeof(private_token_t) + sizeof(poly_modq_t))/(double)1048576.0 << endl;
 		
