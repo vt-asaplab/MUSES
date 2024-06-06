@@ -734,7 +734,7 @@ int main(int argc, char **argv) {
     num_parties       = nP;
     // Initialize default parameters
     num_writers       = 1;
-    bloom_filter_size = 2000;
+    bloom_filter_size = 1120;
     num_documents     = 1024;
     
     int i = 1;
