@@ -530,7 +530,7 @@ void test_keyword_search() {
 int main(int argc, char **argv) {
     // Initialize default parameters
     num_writers       = 1;
-    bloom_filter_size = 2000;
+    bloom_filter_size = 1120;
     num_documents     = 1024;
     
     int i = 3;
