@@ -166,7 +166,7 @@ void test_keyword_search() {
     
     cout << "[Keyword search] Preprocessing latency: " << time_from(start) << "us" << endl;
     
-    int n_keyword_search_times = 1; 
+    int n_keyword_search_times = 10; 
     FSSKey key[K];
     int BF_index[K];
     private_token_t secret_shared_private_tokens[K];
