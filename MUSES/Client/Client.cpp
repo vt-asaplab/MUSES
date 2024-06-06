@@ -399,7 +399,7 @@ void test_keyword_search() {
     private_token_t private_token;
     poly_modq_t column_key;
 
-    int n_keyword_search_times = 10;
+    int n_keyword_search_times = 1;
     num_parties = nP;
     
     secret_shared_private_tokens = new private_token_t[num_writers][nP][K];
