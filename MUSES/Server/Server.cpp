@@ -26,8 +26,6 @@ void test_secret_key_update() {
     // Measure average latency of secret-key update
     int n_secret_key_update_times = 1;
     for(int t = 0; t < n_secret_key_update_times; ++t) {
-        auto start = clock_start();
-
         zmq::message_t msg_writer_id;
         socket_server->recv(&msg_writer_id);
         string received_id = msg_writer_id.to_string();
@@ -59,6 +57,8 @@ void test_secret_key_update() {
             msg_secret_shares_key_data += sizeof(secret_token_t);
         }
 
+		auto start = clock_start();
+		
         update_secret_key(selected_writer, msg_secret_shares_key_data); 
 
         string ack = "ACK";
