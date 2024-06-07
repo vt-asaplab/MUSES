@@ -164,14 +164,12 @@ void test_keyword_search() {
     preprocessing_shuffling(permutation_seed);
     preprocessing_counting();
     
-    double preprocessing_time = time_from(start);
-
-    cout << "[Keyword search] Preprocessing latency: " << preprocessing_time << "us" << endl;
+    cout << "[Keyword search] Preprocessing latency: " << time_from(start) << "us" << endl;
     
     // Mark offline phase starts
     zmq::message_t init_prep_msg;
     socket_server->recv(&init_prep_msg);
-    
+
     // When preprocessing phase finishes
     string fin_prep_msg_data = "FINPRE";
     zmq::message_t fin_prep_msg(fin_prep_msg_data.length());
