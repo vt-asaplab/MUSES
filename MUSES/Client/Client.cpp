@@ -679,7 +679,7 @@ void test_keyword_search() {
         }
         joinNclean(works);
 
-		bandwidth += (num_parties - 1) * num_writers * sizeof(block);
+	bandwidth += (num_parties - 1) * num_writers * sizeof(block);
 		
         int n = num_documents;
         
