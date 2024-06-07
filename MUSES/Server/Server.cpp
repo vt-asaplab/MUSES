@@ -164,8 +164,20 @@ void test_keyword_search() {
     preprocessing_shuffling(permutation_seed);
     preprocessing_counting();
     
-    cout << "[Keyword search] Preprocessing latency: " << time_from(start) << "us" << endl;
+    double preprocessing_time = time_from(start);
+
+    cout << "[Keyword search] Preprocessing latency: " << preprocessing_time << "us" << endl;
     
+    // Mark offline phase starts
+    zmq::message_t init_prep_msg;
+    socket_server->recv(&init_prep_msg);
+    
+    // When preprocessing phase finishes
+    string fin_prep_msg_data = "FINPRE";
+    zmq::message_t fin_prep_msg(fin_prep_msg_data.length());
+    memcpy(fin_prep_msg.data(), fin_prep_msg_data.c_str(), fin_prep_msg_data.length());
+    socket_server->send(fin_prep_msg);
+
     int n_keyword_search_times = 1; 
     FSSKey key[K];
     int BF_index[K];
@@ -487,7 +499,7 @@ void test_keyword_search() {
                 memcpy(reply_data, search_output[wid], output_size[wid]*sizeof(int));
                 reply_data += output_size[wid] * sizeof(int);
             }
-        
+
             socket_server->send(reply);
 
             for(int wid = 0; wid < num_writers; ++wid) 
