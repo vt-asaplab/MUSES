@@ -57,7 +57,7 @@ void test_secret_key_update() {
             msg_secret_shares_key_data += sizeof(secret_token_t);
         }
 
-		auto start = clock_start();
+	auto start = clock_start();
 		
         update_secret_key(selected_writer, msg_secret_shares_key_data); 
 
