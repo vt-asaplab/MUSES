@@ -415,7 +415,22 @@ void test_keyword_search() {
         for(int j = 0; j < nP; ++j)
             padding_values[i][j] = new uint16_t[N_S];
     }
+	
+	// Mark when preprocessing phase finishes
+	for (int i = 0; i < nP; ++i) {
+		works.push_back(pool.enqueue([i]() {
+			string init_prep_msg_data = "INITPRE";
+			zmq::message_t init_prep_msg(init_prep_msg_data.length());
+			memcpy(init_prep_msg.data(), init_prep_msg_data.c_str(), init_prep_msg_data.length());
+			socket_client[i]->send(init_prep_msg);
+			
+			zmq::message_t reply;
+			socket_client[i]->recv(&reply);
+		}));
+	}
+	joinNclean(works);
 
+	// When online phase starts
     auto start = clock_start();
     
     for(int t = 0; t < n_keyword_search_times; ++t) {
@@ -707,7 +722,7 @@ void test_keyword_search() {
 		}
     }
 	
-    cout << "[Keyword search] End-to-end latency (including preprocessing): " << time_from(start)/n_keyword_search_times << "us" << endl;
+    cout << "[Keyword search] End-to-end latency: " << time_from(start)/n_keyword_search_times << "us" << endl;
     cout << "[Keyword search] Bandwidth cost: " << (bandwidth/(double)1048576.0) << "MB" << endl;
 	
     for(int i = 0; i < num_writers; ++i) {
