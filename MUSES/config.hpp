@@ -9,7 +9,7 @@ const int K           = 7;
 const int MAX_THREADS = 8;
 
 const int nP          = 2;
-const int SERVER_PORT = 8080;
+const int SERVER_PORT = 4040;
 
 const int MASK_P      = ((1<<P) - 1);
 const int MASK_Q      = ((1<<Q) - 1);
