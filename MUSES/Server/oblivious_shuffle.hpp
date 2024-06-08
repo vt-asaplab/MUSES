@@ -321,7 +321,7 @@ void preprocessing_shuffling(block &permutation_seed) {
     std::thread ts([n, port_parties](){
         for(int i = 1; i < party; ++i) {
             cout << "Preprocessing shuffling with party " << i << endl;
-            NetIO *io         = new NetIO(IP[i-1], port_parties[i-1][party-1]);
+            NetIO *io         = new NetIO(IP[i], port_parties[i-1][party-1]);
             IKNP<NetIO> *iknp = new IKNP<NetIO>(io, true);
             // for(int wid = 0; wid < num_writers; ++wid) 
             for(int wid = 0; wid < 1; ++wid) 
