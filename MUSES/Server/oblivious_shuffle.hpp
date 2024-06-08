@@ -15,6 +15,8 @@ PRG                  prg;
 extern int           num_parties;
 extern int           party;
 extern int           port; 
+extern int           n_s;
+extern int           mask_n_s;
 extern NetIOMP<nP>   *io;
 
 void share_translation(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j, 
@@ -60,7 +62,7 @@ void share_translation(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j,
                     
                     for(int i = n - 2; i < 2*n - 2; ++i) {
                         // cout << "seeds[" << i << "] = " << (seeds[i]) << endl;
-                        full_matrix[t][i - n + 2] = seeds[i][0] & MASK_N_S;
+                        full_matrix[t][i - n + 2] = seeds[i][0] & mask_n_s;
                     } 
 
                     memcpy(b0_ptr, &seeds[0], sizeof(block));
@@ -117,8 +119,8 @@ void share_translation(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j,
         for(int i = 0; i < n; ++i) {
             b[wid][party_i-1][i] = 0;
             for(int j = 0; j < n; ++j) {
-                a[wid][party_i-1][j] = (a[wid][party_i-1][j] + full_matrix[i][j]) & MASK_N_S;
-                b[wid][party_i-1][i] = (b[wid][party_i-1][i] + full_matrix[i][j]) & MASK_N_S;
+                a[wid][party_i-1][j] = (a[wid][party_i-1][j] + full_matrix[i][j]) & mask_n_s;
+                b[wid][party_i-1][i] = (b[wid][party_i-1][i] + full_matrix[i][j]) & mask_n_s;
             }
         }
 
@@ -227,7 +229,7 @@ void share_translation(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j,
                     // cout << endl;
                     for(int i = n - 2; i < 2*n - 2; ++i) {
                         // cout << "rseeds[" << i << "] = " << (rseeds[i]) << endl;
-                        punctured_matrix[t][i-n+2] = rseeds[i][0] & MASK_N_S;
+                        punctured_matrix[t][i-n+2] = rseeds[i][0] & mask_n_s;
                     } 
                     r_ptr += n_levels;
                 }
@@ -251,14 +253,14 @@ void share_translation(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j,
         for(int i = 0; i < n; ++i) {
             b[wid][party_j-1][i] = 0;
             for(int j = 0; j < n; ++j) {
-                a[wid][party_j-1][j] = (a[wid][party_j-1][j] + punctured_matrix[i][j]) & MASK_N_S;
-                b[wid][party_j-1][i] = (b[wid][party_j-1][i] + punctured_matrix[i][j]) & MASK_N_S;
+                a[wid][party_j-1][j] = (a[wid][party_j-1][j] + punctured_matrix[i][j]) & mask_n_s;
+                b[wid][party_j-1][i] = (b[wid][party_j-1][i] + punctured_matrix[i][j]) & mask_n_s;
             }
         }
 
         delta[wid][party_j-1] = new modp_t[n];
         for(int i = 0; i < n; ++i) 
-            delta[wid][party_j-1][i] = (N_S + b[wid][party_j-1][i] - a[wid][party_j-1][pi[wid][i]]) & MASK_N_S;
+            delta[wid][party_j-1][i] = (n_s + b[wid][party_j-1][i] - a[wid][party_j-1][pi[wid][i]]) & mask_n_s;
         
         delete [] a[wid][party_j-1];
         delete [] b[wid][party_j-1];
@@ -364,7 +366,7 @@ void preprocessing_shuffling(block &permutation_seed) {
             memset(delta[wid][party-1], 0, num_documents*sizeof(modp_t));
             for(int i = party; i < num_parties; ++i) {
                 for(int j = 0; j < num_documents; ++j) 
-                    delta[wid][party-1][j] = (delta[wid][party-1][j] + delta[wid][i][j]) & MASK_N_S;
+                    delta[wid][party-1][j] = (delta[wid][party-1][j] + delta[wid][i][j]) & mask_n_s;
                 // cout  << "Delta[" << (party-1) << "] += " << "Delta[" << (i) << "]" << endl;
             }
         }
@@ -377,7 +379,7 @@ void preprocessing_shuffling(block &permutation_seed) {
                 // for(int wid = 0; wid < num_writers; ++wid) {
                 for(int wid = 0; wid < 1; ++wid) {
                     for(int j = 0; j < num_documents; ++j) 
-                        delta_prime[j] = (N_S + b[wid][i-2][j] - a[wid][i-1][j]) & MASK_N_S;
+                        delta_prime[j] = (n_s + b[wid][i-2][j] - a[wid][i-1][j]) & mask_n_s;
                     io->send_data(i, delta_prime, num_documents*sizeof(modp_t));
                     io->flush(i);    
                 }
@@ -396,7 +398,7 @@ void preprocessing_shuffling(block &permutation_seed) {
                     io->recv_data(i, delta_prime, num_documents*sizeof(modp_t));
                     io->flush(i);    
                     for(int j = 0; j < num_documents; ++j) 
-                        delta[wid][party-1][j] = (N_S + delta[wid][party-1][j] - delta_prime[pi[wid][j]]) & MASK_N_S;
+                        delta[wid][party-1][j] = (n_s + delta[wid][party-1][j] - delta_prime[pi[wid][j]]) & mask_n_s;
                 }
                 // cout  << "Delta[" << (party-1) << "] -= " << "Delta_Prime[" << (i-1) << "]" << endl;
             }
@@ -404,7 +406,7 @@ void preprocessing_shuffling(block &permutation_seed) {
             // for(int wid = 0; wid < num_writers; ++wid)
             for(int wid = 0; wid < 1; ++wid)  
                 for(int j = 0; j < num_documents; ++j) 
-                    delta[wid][party-1][j] = (N_S + delta[wid][party-1][j] - b[wid][party-2][pi[wid][j]]) & MASK_N_S;
+                    delta[wid][party-1][j] = (n_s + delta[wid][party-1][j] - b[wid][party-2][pi[wid][j]]) & mask_n_s;
 
             // cout  << "Delta[" << (party-1) << "] -= " << "Pi(b[" << (party-2) << "])" << endl;
         }
@@ -419,21 +421,21 @@ void preprocessing_shuffling(block &permutation_seed) {
 void mask(modp_t *data, int wid) {    
     for(int i = 0; i < num_documents; ++i) {
         // data[i] = (data[i] + a[wid][0][i]) & MASK_N_S;
-	   data[i] = (data[i] + a[0][0][i]) & MASK_N_S;
+	   data[i] = (data[i] + a[0][0][i]) & mask_n_s;
     }
 }
 
 void shuffle(modp_t *data, modp_t *data_p1, modp_t *data_p2, int wid) {
     for(int i = 0; i < num_documents; ++i) {
         // data[i] = (delta[wid][party-1][i] + data_p1[pi[wid][i]] + data_p2[pi[wid][i]]) & MASK_N_S;
-    	data[i] = (delta[0][party-1][i] + data_p1[pi[0][i]] + data_p2[pi[0][i]]) & MASK_N_S;
+    	data[i] = (delta[0][party-1][i] + data_p1[pi[0][i]] + data_p2[pi[0][i]]) & mask_n_s;
     }
 }
 
 void unmask(modp_t *data, int wid) {
     for(int i = 0; i < num_documents; ++i) {
         // data[i]    = (N_S + data[i] - b[wid][party-2][i]) & MASK_N_S;
-        data[i]    = (N_S + data[i] - b[0][party-2][i]) & MASK_N_S;
+        data[i]    = (n_s + data[i] - b[0][party-2][i]) & mask_n_s;
         // data[i]  >>= E;
     }
 }

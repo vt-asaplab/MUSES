@@ -20,6 +20,8 @@ int                   port;
 int                   num_writers;
 int                   bloom_filter_size;
 int                   num_documents;
+int                   n_s;
+int                   mask_n_s;
 
 void test_secret_key_update() {
     cout << "Performing permission revocation..." << endl;
@@ -412,7 +414,7 @@ void test_keyword_search() {
             for(int i = 0; i < num_documents; ++i) {
                 data_out[0][i] = e[0][i][K - data_out[0][i]];
                 // data_out[0][i] = e[wid][i][K - data_out[0][i]];
-                s = (s + data_out[0][i]) & MASK_N_S;
+                s = (s + data_out[0][i]) & mask_n_s;
             }
 
             // cout << "s = " << s << endl;
@@ -431,7 +433,7 @@ void test_keyword_search() {
 		int total_output = 0;
         for(int wid = 0; wid < num_writers; ++wid)
         {   
-            memcpy(padded_data[wid] + num_documents - N_S, padding_response.data() + wid * N_S * sizeof(uint16_t), N_S*sizeof(uint16_t));
+            memcpy(padded_data[wid] + num_documents - n_s, padding_response.data() + wid * n_s * sizeof(uint16_t), n_s*sizeof(uint16_t));
             // Oblivious shuffle
             if(party != 1) {
                 mask(padded_data[wid], wid);
@@ -446,7 +448,7 @@ void test_keyword_search() {
                 for(int i = 2; i <= num_parties; ++i) {
                     io->recv_data(i, tmp, num_documents * sizeof(modp_t));
                     for(int j = 0; j < num_documents; ++j)
-                        sum[j] = (sum[j] + tmp[j]) & MASK_N_S;
+                        sum[j] = (sum[j] + tmp[j]) & mask_n_s;
                 }
                 shuffle(data_final, padded_data[wid], sum, wid);
                 io->send_data(2, data_final, num_documents * sizeof(modp_t));
@@ -542,8 +544,10 @@ int main(int argc, char **argv) {
     num_writers       = 1;
     bloom_filter_size = 1120;
     num_documents     = 1024;
+    n_s               = 256;
+    mask_n_s          = 255;
     
-    int i = 3;
+    int i = 1;
     while (i < argc) {
         if(strcmp(argv[i], "-w") == 0) 
             num_writers = atoi(argv[++i]);
@@ -551,6 +555,10 @@ int main(int argc, char **argv) {
             bloom_filter_size = atoi(argv[++i]);
         else if (strcmp(argv[i], "-d") == 0) 
             num_documents = atoi(argv[++i]);
+        else if (strcmp(argv[i], "-ns") == 0) {
+            n_s = atoi(argv[++i]);
+            mask_n_s = n_s - 1;
+        }
         else {
             cout << "Option " << argv[i] << " does not exist!!!" << endl;
             exit(1);

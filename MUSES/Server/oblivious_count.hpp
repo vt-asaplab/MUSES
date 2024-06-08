@@ -11,7 +11,8 @@ using namespace std;
 extern int           num_parties;
 extern int           party;
 extern int           port; 
-
+extern int           n_s;
+extern int           mask_n_s;
 uint16_t             **r;
 uint16_t             ***e;
 
@@ -44,7 +45,7 @@ void shr_trns(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j, uint8_t *pun
             
             for(int i = n - 2; i < 2*n - 2; ++i) {
                 // cout << "seeds[" << i << "] = " << (seeds[i]) << endl;
-                full_matrix[t][i - n + 2] = seeds[i][0] & MASK_N_S;
+                full_matrix[t][i - n + 2] = seeds[i][0] & mask_n_s;
             } 
 
             memcpy(b0_ptr, &seeds[0], sizeof(block));
@@ -91,8 +92,8 @@ void shr_trns(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j, uint8_t *pun
         for(int i = 0; i < n; ++i) {
             bc[party_i-1][i] = 0;
             for(int j = 0; j < n; ++j) {
-                ac[party_i-1][j] = (ac[party_i-1][j] + full_matrix[i][j]) & MASK_N_S;
-                bc[party_i-1][i] = (bc[party_i-1][i] + full_matrix[i][j]) & MASK_N_S;
+                ac[party_i-1][j] = (ac[party_i-1][j] + full_matrix[i][j]) & mask_n_s;
+                bc[party_i-1][i] = (bc[party_i-1][i] + full_matrix[i][j]) & mask_n_s;
             }
         }
 
@@ -174,7 +175,7 @@ void shr_trns(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j, uint8_t *pun
             // cout << endl;
             for(int i = n - 2; i < 2*n - 2; ++i) {
                 // cout << "rseeds[" << i << "] = " << (rseeds[i]) << endl;
-                punctured_matrix[t][i-n+2] = rseeds[i][0] & MASK_N_S;
+                punctured_matrix[t][i-n+2] = rseeds[i][0] & mask_n_s;
             } 
             r_ptr += n_levels;
         }
@@ -193,13 +194,13 @@ void shr_trns(IKNP<NetIO> *ot, NetIO *io, int party_i, int party_j, uint8_t *pun
         for(int i = 0; i < n; ++i) {
             bc[party_j-1][i] = 0;
             for(int j = 0; j < n; ++j) {
-                ac[party_j-1][j] = (ac[party_j-1][j] + punctured_matrix[i][j]) & MASK_N_S;
-                bc[party_j-1][i] = (bc[party_j-1][i] + punctured_matrix[i][j]) & MASK_N_S;
+                ac[party_j-1][j] = (ac[party_j-1][j] + punctured_matrix[i][j]) & mask_n_s;
+                bc[party_j-1][i] = (bc[party_j-1][i] + punctured_matrix[i][j]) & mask_n_s;
             }
         }
 
         for(int i = 0; i < n; ++i) 
-            deltac[party_j-1][i] = (N_S + bc[party_j-1][i] - ac[party_j-1][punctured_positions[i]]) & MASK_N_S;
+            deltac[party_j-1][i] = (n_s + bc[party_j-1][i] - ac[party_j-1][punctured_positions[i]]) & mask_n_s;
 
         for(int i = 0; i < n; ++i)
             delete [] punctured_matrix[i];
@@ -298,7 +299,7 @@ void preprocessing_counting() {
                     if(party > 1) {
                         for(int i = 1; i < party; ++i)
                             for(int j = 0; j < K+1; ++j) 
-                                deltac[party-1][j] = (deltac[party-1][j] + deltac[i-1][j]) & MASK_N_S;
+                                deltac[party-1][j] = (deltac[party-1][j] + deltac[i-1][j]) & mask_n_s;
                     }
 
                     std::thread tsp([io, ac, bc](){
@@ -306,7 +307,7 @@ void preprocessing_counting() {
                             uint16_t *delta_prime = new uint16_t[K+1];
                             for(int i = party + 1; i < num_parties; ++i) {
                                 for(int j = 0; j < K+1; ++j) 
-                                    delta_prime[j] = (N_S + bc[i-1][j] - ac[i][j]) & MASK_N_S;
+                                    delta_prime[j] = (n_s + bc[i-1][j] - ac[i][j]) & mask_n_s;
                                 io->send_data(i, delta_prime, (K+1)*sizeof(uint16_t));
                                 io->flush();    
                             }
@@ -321,7 +322,7 @@ void preprocessing_counting() {
                                 io->recv_data(i, delta_prime, (K+1)*sizeof(uint16_t));
                                 io->flush();    
                                 for(int j = 0; j < K+1; ++j) 
-                                    deltac[party-1][j] = (N_S + deltac[party-1][j] - delta_prime[j]) & MASK_N_S;
+                                    deltac[party-1][j] = (n_s + deltac[party-1][j] - delta_prime[j]) & mask_n_s;
                             }
                             delete [] delta_prime;
                         }
@@ -332,7 +333,7 @@ void preprocessing_counting() {
                     
                     if(party < num_parties) {
                         for(int j = 0; j < K+1; ++j) 
-                            deltac[party-1][j] = (deltac[party-1][j] + ac[party][j]) & MASK_N_S;
+                            deltac[party-1][j] = (deltac[party-1][j] + ac[party][j]) & mask_n_s;
                     }
 
                     uint16_t e1[K+1]; 
@@ -343,11 +344,11 @@ void preprocessing_counting() {
                         for(int i = 1; i < K + 1; ++i) 
                             e1c[i] = 0;
                         for(int i = 0; i < K + 1; ++i) 
-                            e1[i] = (e1c[pic[i]] + deltac[party-1][i]) & MASK_N_S;
+                            e1[i] = (e1c[pic[i]] + deltac[party-1][i]) & mask_n_s;
                         io->send_data(party + 1, e1, (K+1)*sizeof(uint16_t));
                         io->flush();   
                         for(int i = 0; i < K + 1; ++i) 
-                            e[wid][n][i] = (N_S - bc[num_parties-1][i]) & MASK_N_S;
+                            e[wid][n][i] = (n_s - bc[num_parties-1][i]) & mask_n_s;
                         // cout << "e = ";
                         // for(int i = 0; i < K + 1; ++i) cout << (int)e[wid][n][i] << " ";
                         // cout << endl; 
@@ -356,11 +357,11 @@ void preprocessing_counting() {
                         io->recv_data(party - 1, e1c, (K+1)*sizeof(uint16_t));
                         io->flush();    
                         for(int i = 0; i < K + 1; ++i) 
-                            e1[i] = (e1c[pic[i]] + deltac[party-1][i]) & MASK_N_S;
+                            e1[i] = (e1c[pic[i]] + deltac[party-1][i]) & mask_n_s;
                         io->send_data(party + 1, e1, (K+1)*sizeof(uint16_t));
                         io->flush();   
                         for(int i = 0; i < K + 1; ++i) 
-                            e[wid][n][i] = (N_S - bc[num_parties-1][i]) & MASK_N_S;
+                            e[wid][n][i] = (n_s - bc[num_parties-1][i]) & mask_n_s;
                         // cout << "e = ";
                         // for(int i = 0; i < K + 1; ++i) cout << (int)e[wid][n][i] << " ";
                         // cout << endl;
@@ -369,7 +370,7 @@ void preprocessing_counting() {
                         io->recv_data(party - 1, e1, (K+1)*sizeof(uint16_t));
                         io->flush();    
                         for(int i = 0; i < K + 1; ++i) 
-                            e[wid][n][i] = (e1[pic[i]] + deltac[party-1][i]) & MASK_N_S;
+                            e[wid][n][i] = (e1[pic[i]] + deltac[party-1][i]) & mask_n_s;
                         // cout << "e = ";
                         // for(int i = 0; i < K + 1; ++i) cout << (int)e[wid][n][i] << " ";
                         // cout << endl;

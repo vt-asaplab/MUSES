@@ -5,7 +5,6 @@ const int P           = 10;
 const int E           = 6;
 const int MAX_E       = 6;
 const int N           = 512;
-const int N_S         = 256;  // N_S <= 0.25 * #Documents
 const int K           = 7;
 const int MAX_THREADS = 8;
 
@@ -14,6 +13,5 @@ const int SERVER_PORT = 8080;
 
 const int MASK_P      = ((1<<P) - 1);
 const int MASK_Q      = ((1<<Q) - 1);
-const int MASK_N_S    = (N_S - 1);
 
 

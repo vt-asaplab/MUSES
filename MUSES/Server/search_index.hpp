@@ -11,6 +11,7 @@ extern int       num_writers;
 extern int       bloom_filter_size;
 extern int       num_documents;
 extern int       num_parties; 
+extern int       n_s;
 
 uint64_t         **states;
 modp_t           ***hashed_states;
@@ -43,12 +44,12 @@ void init_search_index() {
         for(int i = 0; i < bloom_filter_size; ++i) {
             search_index[wid][i] = new modp_t[num_documents];
             int count_1_bits = 0;
-            for(int j = 0; j < num_documents - N_S; ++j) {
+            for(int j = 0; j < num_documents - n_s; ++j) {
                 search_index[wid][i][j] = dis(gen);
                 if(search_index[wid][i][j]) count_1_bits++;
             }
             while(count_1_bits > max_num_1_bits) {
-                int p = gen() % (num_documents - N_S);
+                int p = gen() % (num_documents - n_s);
                 if(search_index[wid][i][p]) {
                     search_index[wid][i][p] = 0;
                     count_1_bits--;

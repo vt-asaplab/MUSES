@@ -14,6 +14,8 @@ int             num_parties;
 int             num_writers;
 int             bloom_filter_size;
 int             num_documents;
+int             n_s;
+int             mask_n_s;
 uint8_t         **writer_secret_keys;
 uint64_t        bandwidth;
 
@@ -414,7 +416,7 @@ void test_keyword_search() {
     for(int i = 0; i < num_writers; ++i) {
         padding_values[i] = new uint16_t*[nP];
         for(int j = 0; j < nP; ++j)
-            padding_values[i][j] = new uint16_t[N_S];
+            padding_values[i][j] = new uint16_t[n_s];
     }
 	
 	// Mark when preprocessing phase finishes
@@ -602,33 +604,33 @@ void test_keyword_search() {
 
         // start = clock_start();
         
-        uint16_t current_sum[N_S];
+        uint16_t current_sum[n_s];
 
         for(int i = 0; i < num_writers; ++i) {
-            memset(current_sum, 0, N_S*sizeof(uint16_t));
+            memset(current_sum, 0, n_s*sizeof(uint16_t));
             uint16_t sp = 0;
             for(int j = 0; j < num_parties; ++j) 
-                sp = (sp + s[j][i]) & MASK_N_S;
+                sp = (sp + s[j][i]) & mask_n_s;
             
-            uint16_t padded = N_S - 1 - sp;
+            uint16_t padded = n_s - 1 - sp;
             for(int j = 0; j < num_parties - 1; ++j) {
-                prg->random_data(padding_values[i][j], N_S*sizeof(uint16_t));
-                for(int k = 0; k < N_S; ++k) {
-                    padding_values[i][j][k] &= MASK_N_S;
-                    current_sum[k] = (current_sum[k] + padding_values[i][j][k]) & MASK_N_S;
+                prg->random_data(padding_values[i][j], n_s*sizeof(uint16_t));
+                for(int k = 0; k < n_s; ++k) {
+                    padding_values[i][j][k] &= mask_n_s;
+                    current_sum[k] = (current_sum[k] + padding_values[i][j][k]) & mask_n_s;
                 }
             }
             for(int j = 0; j < padded; ++j) 
-                padding_values[i][nP-1][j] = (N_S + 1 - current_sum[j]) & MASK_N_S;
-            for(int j = padded; j < N_S; ++j) 
-                padding_values[i][nP-1][j] = (N_S - current_sum[j]) & MASK_N_S;
+                padding_values[i][nP-1][j] = (n_s + 1 - current_sum[j]) & mask_n_s;
+            for(int j = padded; j < n_s; ++j) 
+                padding_values[i][nP-1][j] = (n_s - current_sum[j]) & mask_n_s;
         }
 
         for(int i = 0; i < num_parties; ++i) {
             works.push_back(pool.enqueue([i, padding_values]() {
-                zmq::message_t padding_response(num_writers * N_S *sizeof(uint16_t));
+                zmq::message_t padding_response(num_writers * n_s *sizeof(uint16_t));
                 for(int j = 0; j < num_writers; ++j) 
-                    memcpy(padding_response.data() + j * N_S * sizeof(uint16_t), padding_values[j][i], N_S*sizeof(uint16_t));
+                    memcpy(padding_response.data() + j * n_s * sizeof(uint16_t), padding_values[j][i], n_s*sizeof(uint16_t));
                 socket_client[i]->send(padding_response);
 
 				// For measuring bandwidth
@@ -705,7 +707,7 @@ void test_keyword_search() {
 
             cout << "Search output: ";
             for(int i = 0; i < num_documents; ++i) {
-                if(search_output[wid][i] && (i < num_documents - N_S))
+                if(search_output[wid][i] && (i < num_documents - n_s))
                     cout << i << " ";
             }
             cout << endl;
@@ -752,6 +754,8 @@ int main(int argc, char **argv) {
     num_writers       = 1;
     bloom_filter_size = 1120;
     num_documents     = 1024;
+    n_s               = 256;
+    mask_n_s          = 255;
     
     int i = 1;
     while (i < argc) {
@@ -761,6 +765,10 @@ int main(int argc, char **argv) {
             bloom_filter_size = atoi(argv[++i]);
         else if (strcmp(argv[i], "-d") == 0) 
             num_documents = atoi(argv[++i]);
+        else if (strcmp(argv[i], "-ns") == 0) {
+            n_s = atoi(argv[++i]);
+            mask_n_s = n_s - 1;
+        }
         else {
             cout << "Option " << argv[i] << " does not exist!!!" << endl;
             exit(1);
