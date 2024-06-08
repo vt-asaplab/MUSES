@@ -10,12 +10,12 @@ const static int fpre_threads = 1;
 
 //#define __debug
 const static char *IP[] = {""
-,	"127.0.0.1"
-,	"127.0.0.1"
-,	"127.0.0.1"
-, 	"127.0.0.1"
-, 	"127.0.0.1"
-,	"127.0.0.1"};
+,	"127.0.0.1"    // Server 1
+,	"127.0.0.1"    // Server 2
+,	"127.0.0.1"    // Server 3
+, 	"127.0.0.1"    // Server 4
+, 	"127.0.0.1"    // Server 5
+,	"127.0.0.1"};  // Server 6
 
 const static bool lan_network = false;
 #endif// __C2PC_CONFIG
