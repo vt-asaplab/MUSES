@@ -90,7 +90,7 @@ const static char *IP[] = {""
 2. Client: modify servers' IP addresses at line 786 ``string ip_addresses[] = {"127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1"};`` in file **Client/Client.cpp** and recompile Client.
 
 ## Configuring Number of Test Execution:
-By default, keyword search, document update and permission revocation operations are executed one time. We can increase the number of operations as follows:
+By default, keyword search, document update and permission revocation operations are executed one time. We can increase the number of operations to evaluate average execute time as follows:
 
 1. Server: file **Server/Server.cpp**
 
