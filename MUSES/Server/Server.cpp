@@ -547,7 +547,7 @@ int main(int argc, char **argv) {
     n_s               = 256;
     mask_n_s          = 255;
     
-    int i = 1;
+    int i = 3;
     while (i < argc) {
         if(strcmp(argv[i], "-w") == 0) 
             num_writers = atoi(argv[++i]);
