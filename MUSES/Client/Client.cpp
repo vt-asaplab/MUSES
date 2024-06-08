@@ -705,7 +705,7 @@ void test_keyword_search() {
                 memcpy(search_output[wid], reshuffled_output[wid], num_documents*sizeof(bool));
             }
 
-            cout << "Search output: ";
+            cout << "Writer " << (wid + 1) << ": ";
             for(int i = 0; i < num_documents; ++i) {
                 if(search_output[wid][i] && (i < num_documents - n_s))
                     cout << i << " ";
