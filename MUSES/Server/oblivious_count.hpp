@@ -271,7 +271,7 @@ void preprocessing_counting() {
                     std::thread ts([port_parties, pic, ac, bc, deltac](){
                         for(int i = party + 1; i <= num_parties; ++i) {
                             // cout << "Preprocessing counting with party " << i << endl;
-                            NetIO *io         = new NetIO(IP[i-1], port_parties[i-1][party-1], true);
+                            NetIO *io         = new NetIO(IP[i], port_parties[i-1][party-1], true);
                             IKNP<NetIO> *iknp = new IKNP<NetIO>(io, true);
                             shr_trns(iknp, io, i, party, pic, ac, bc, deltac);
                             delete io;
