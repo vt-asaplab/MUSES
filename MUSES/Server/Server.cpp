@@ -176,7 +176,7 @@ void test_keyword_search() {
     memcpy(fin_prep_msg.data(), fin_prep_msg_data.c_str(), fin_prep_msg_data.length());
     socket_server->send(fin_prep_msg);
 
-    int n_keyword_search_times = 1; 
+    int n_keyword_search_times = 10; 
     FSSKey key[K];
     int BF_index[K];
     private_token_t secret_shared_private_tokens[K];
