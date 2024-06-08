@@ -125,8 +125,8 @@ void test_secret_key_update() {
         }
         joinNclean(works);
 
-	// Measure performance by our final version implementation in Figure 4
-	auto start = clock_start();
+	    // Measure performance by our final version implementation in Figure 4
+	    auto start = clock_start();
 	    
         for(int t = 0; t < MAX_THREADS; ++t) {
             works.push_back(pool.enqueue([t, size_per_thread, column_keys]() {
@@ -143,7 +143,7 @@ void test_secret_key_update() {
         }
         joinNclean(works);
 
-	writer_time += time_from(start);
+	    writer_time += time_from(start);
 	
         // Rotate both reader and writer's key
         /* Note: Rotating the reader's key requires to announce to all writers to encrypt private tokens */
@@ -221,7 +221,7 @@ void test_secret_key_update() {
         cout << "[Permission revocation] Writer bandwidth: " << (nP * bloom_filter_size * sizeof(poly_modq_t) * 2)/(double)1048576.0 << "MB" << endl;
 		
         start = clock_start();
-
+        
         // if(t < n_secret_key_update_times - 1) {
             for(int i = 0; i < nP; ++i) {
                 works.push_back(pool.enqueue([i]() {
