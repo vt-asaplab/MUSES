@@ -86,9 +86,7 @@ void test_secret_key_update() {
     private_token_t *private_tokens = new private_token_t[bloom_filter_size];
 
     for(int t = 0; t < n_secret_key_update_times; ++t) {
-        double writer_time = 0;
-        auto   start       = clock_start();
-        
+        double writer_time  = 0;
         int selected_writer = 0;
         string request      = to_string(selected_writer);
 
@@ -127,6 +125,9 @@ void test_secret_key_update() {
         }
         joinNclean(works);
 
+	// Measure performance by our final version implementation in Figure 4
+	auto start = clock_start();
+	    
         for(int t = 0; t < MAX_THREADS; ++t) {
             works.push_back(pool.enqueue([t, size_per_thread, column_keys]() {
                 PRG prg;
@@ -141,7 +142,9 @@ void test_secret_key_update() {
             }));
         }
         joinNclean(works);
-        
+
+	writer_time += time_from(start);
+	
         // Rotate both reader and writer's key
         /* Note: Rotating the reader's key requires to announce to all writers to encrypt private tokens */
         // rotate_public_private_keys(); 
@@ -157,8 +160,6 @@ void test_secret_key_update() {
             }));
         }
         joinNclean(works);
-
-        writer_time += time_from(start);
 
         // This latency should be excluded. It is only here for correctness testing 
         // In permission revocation protocol, private keys are not updated
