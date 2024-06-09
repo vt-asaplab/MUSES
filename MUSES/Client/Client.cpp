@@ -429,8 +429,8 @@ void test_keyword_search() {
         }));
     }
     joinNclean(works);
-
-	// When online phase starts
+    
+    // When online phase starts
     auto start = clock_start();
     
     for(int t = 0; t < n_keyword_search_times; ++t) {
@@ -688,7 +688,7 @@ void test_keyword_search() {
 
         for(int wid = 0; wid < num_writers; ++wid) {
             for(int m = num_parties-2; m >= 0; --m) {
-				prg[m].reseed(&permutation_seed[m]);
+                prg[m].reseed(&permutation_seed[m]);
                 prg[m].random_data(random_indices, n * sizeof(uint32_t));
                 for(uint32_t i = 0; i < n; ++i)
                     pi[i] = i;
