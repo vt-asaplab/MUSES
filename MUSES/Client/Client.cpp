@@ -127,8 +127,8 @@ void test_secret_key_update() {
         }
         joinNclean(works);
 
-	    // Measure performance by our final version implementation in Figure 4
-	    auto start = clock_start();
+        // Measure performance by our final version implementation in Figure 4
+        auto start = clock_start();
 	    
         for(int t = 0; t < MAX_THREADS; ++t) {
             works.push_back(pool.enqueue([t, size_per_thread, column_keys]() {
@@ -682,7 +682,7 @@ void test_keyword_search() {
         }
         joinNclean(works);
 
-	bandwidth += (num_parties - 1) * num_writers * sizeof(block);
+        bandwidth += (num_parties - 1) * num_writers * sizeof(block);
 		
         int n = num_documents;
         
