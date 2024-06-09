@@ -110,7 +110,7 @@ void test_document_update() {
         for(int i = 0; i < bloom_filter_size; ++i) {
             search_index[writer_id][i][file_id] = data_out[i];
         }
-	    */
+        */
         updated_data_ptr += bloom_filter_size * sizeof(modp_t);
         memcpy(data_out, updated_data_ptr, bloom_filter_size * sizeof(modp_t));
 
@@ -428,9 +428,9 @@ void test_keyword_search() {
         
         socket_server->send(counting_result);
         zmq::message_t padding_response;
-		socket_server->recv(&padding_response);
+        socket_server->recv(&padding_response);
 	
-		int total_output = 0;
+        int total_output = 0;
         for(int wid = 0; wid < num_writers; ++wid)
         {   
             memcpy(padded_data[wid] + num_documents - n_s, padding_response.data() + wid * n_s * sizeof(uint16_t), n_s*sizeof(uint16_t));
