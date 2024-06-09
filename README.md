@@ -115,7 +115,7 @@ If the code is found useful, we would be appreciated if our paper can be cited w
 ```
 @inproceedings{le2024muses,
       author = {Tung Le and Rouzbeh Behnia and Jorge Guajardo and Thang Hoang},
-      title = {{MUSES}: Efficient Multi-User Searchable Encrypted Database},
+      title = {{MUSES}: Efficient {M}ulti-User {S}earchable {E}ncrypted {D}atabase},
       year = {2024},
       url = {https://eprint.iacr.org/2023/720},
       booktitle = {USENIX Security Symposium 2024},
