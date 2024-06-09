@@ -173,8 +173,8 @@ void init_encrypted_search_index() {
 
         for(int i = 0; i < bloom_filter_size; ++i) 
             delete search_index[wid][i];
-	
-		delete [] search_index[wid];
+	    
+        delete [] search_index[wid];
     }
 
     delete [] search_index;
