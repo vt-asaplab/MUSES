@@ -108,3 +108,19 @@ Then recompile both Server and Client.
 
 **Note**: The configuration need to be kept consistent between Client and Server. 
 
+## Citing
+
+If the code is found useful, we would be appreciated if our paper can be cited with the following bibtex format 
+
+```
+@inproceedings{le2024muses,
+      author = {Tung Le and Rouzbeh Behnia and Jorge Guajardo and Thang Hoang},
+      title = {{MUSES}: Efficient Multi-User Searchable Encrypted Database},
+      year = {2024},
+      url = {https://eprint.iacr.org/2023/720},
+      booktitle = {USENIX Security Symposium 2024},
+}
+```
+
+# Further Information
+For any inquiries, bugs, and assistance on building and running the code, please contact me at [tungle@vt.edu](mailto:tungle@vt.edu?Subject=[MUSES]%20Inquiry).
