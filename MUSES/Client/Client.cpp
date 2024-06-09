@@ -144,8 +144,8 @@ void test_secret_key_update() {
             }));
         }
         joinNclean(works);
-
-	    writer_time += time_from(start);
+        
+        writer_time += time_from(start);
 	
         // Rotate both reader and writer's key
         /* Note: Rotating the reader's key requires to announce to all writers to encrypt private tokens */
@@ -299,8 +299,7 @@ void test_document_update() {
         
         // cout << "Received " << msg_secret_tokens[0].size() << " bytes from server 0" << endl;
 
-        for (int t = 0; t < MAX_THREADS; ++t)
-        {
+        for (int t = 0; t < MAX_THREADS; ++t) {
             works.push_back(pool.enqueue([t, selected_writer, size_per_thread, &msg_secret_tokens, iv, column_keys]() {
                 int start = t * size_per_thread;
                 int end   = start + size_per_thread;
@@ -350,8 +349,7 @@ void test_document_update() {
         }
         joinNclean(works);
 
-        for (int i = 0; i < nP; ++i)
-        {
+        for (int i = 0; i < nP; ++i) {
             works.push_back(pool.enqueue([i, data_out, encrypted_data_out]() { 
                 zmq::message_t msg_updated_data(bloom_filter_size * sizeof(modp_t) * 2);
                 // Send plaintext data just for debugging purpose
@@ -363,8 +361,7 @@ void test_document_update() {
         joinNclean(works);
 
         // if(n_execs < n_document_update_times - 1) {
-        for (int i = 0; i < nP; ++i)
-        {
+        for (int i = 0; i < nP; ++i) {
             works.push_back(pool.enqueue([i]() {
                 zmq::message_t msg_ack;
                 socket_client[i]->recv(&msg_ack);
@@ -418,20 +415,20 @@ void test_keyword_search() {
         for(int j = 0; j < nP; ++j)
             padding_values[i][j] = new uint16_t[n_s];
     }
-	
-	// Mark when preprocessing phase finishes
-	for (int i = 0; i < nP; ++i) {
-		works.push_back(pool.enqueue([i]() {
-			string init_prep_msg_data = "INITPRE";
-			zmq::message_t init_prep_msg(init_prep_msg_data.length());
-			memcpy(init_prep_msg.data(), init_prep_msg_data.c_str(), init_prep_msg_data.length());
-			socket_client[i]->send(init_prep_msg);
+	    
+    // Mark when preprocessing phase finishes
+    for (int i = 0; i < nP; ++i) {
+        works.push_back(pool.enqueue([i]() {
+            string init_prep_msg_data = "INITPRE";
+            zmq::message_t init_prep_msg(init_prep_msg_data.length());
+            memcpy(init_prep_msg.data(), init_prep_msg_data.c_str(), init_prep_msg_data.length());
+            socket_client[i]->send(init_prep_msg);
 			
-			zmq::message_t reply;
-			socket_client[i]->recv(&reply);
-		}));
-	}
-	joinNclean(works);
+            zmq::message_t reply;
+            socket_client[i]->recv(&reply);
+        }));
+    }
+    joinNclean(works);
 
 	// When online phase starts
     auto start = clock_start();
@@ -462,8 +459,8 @@ void test_keyword_search() {
             else generate_keypair(BF_index[i], 1, key[0][i], key[1][i]);
         }
         // delete [] sum;
-
-		// For measuring bandwidth
+        
+        // For measuring bandwidth
         bandwidth = 0;
 
         for(int i = 0; i < num_parties; ++i) {
@@ -474,8 +471,8 @@ void test_keyword_search() {
                     uint32_t p2 = (uint32_t)(pow(2, num_parties-1));
                     uint64_t mu = (uint64_t)ceil((pow(2, n/2.0) * pow(2,(num_parties-1)/2.0)));
                     uint64_t v  = (uint64_t)ceil((pow(2, n))/mu);
-
-					// For measuring bandwidth
+                    
+                    // For measuring bandwidth
                     if(i == 0) {
                         bandwidth += K * (p2*mu*sizeof(modp_t) + v*p2*sizeof(block) + v*p2*sizeof(modp_t)) * num_parties;
                     }
@@ -511,7 +508,7 @@ void test_keyword_search() {
                     }
                     socket_client[i]->send(msg_fss_keys);
                 } else { 
-					// For measuring bandwidth
+                    // For measuring bandwidth
                     if(i == 0) {
                         bandwidth += K * sizeof(FSSKey) * num_parties;
                     }
@@ -537,7 +534,7 @@ void test_keyword_search() {
                 zmq::message_t msg_secret_shared_keys;
                 socket_client[i]->recv(&msg_secret_shared_keys);
 
-				// For measuring bandwidth
+                // For measuring bandwidth
                 if(i == 0) {
                     bandwidth += msg_secret_shared_keys.size() * num_parties;
                 }
@@ -576,7 +573,7 @@ void test_keyword_search() {
             }
             socket_client[i]->send(msg_secret_shared_keys);
 
-			// For measuring bandwidth
+            // For measuring bandwidth
             bandwidth += msg_secret_shared_keys.size();
         }
 
@@ -595,7 +592,7 @@ void test_keyword_search() {
                 socket_client[i]->recv(&reply);
                 memcpy(s[i], reply.data(), num_writers*sizeof(uint16_t));
 
-				// For measuring bandwidth  
+                // For measuring bandwidth  
                 bandwidth += reply.size();
             }));
         }
@@ -632,8 +629,8 @@ void test_keyword_search() {
                 for(int j = 0; j < num_writers; ++j) 
                     memcpy(padding_response.data() + j * n_s * sizeof(uint16_t), padding_values[j][i], n_s*sizeof(uint16_t));
                 socket_client[i]->send(padding_response);
-
-				// For measuring bandwidth
+                
+                // For measuring bandwidth
                 if(i == 0) {
                     bandwidth += padding_response.size() * num_parties;
                 }
@@ -653,8 +650,8 @@ void test_keyword_search() {
                 zmq::message_t reply;
                 socket_client[i]->recv(&reply);
                 cout << "Received " << reply.size() << " bytes from server " << i << endl;
-
-				// For measuring bandwidth
+                
+                // For measuring bandwidth
                 if(i == num_parties - 1) {
                     bandwidth += reply.size();
                 }
@@ -713,16 +710,16 @@ void test_keyword_search() {
             cout << endl;
         }
         if(t == n_keyword_search_times-1) {
-        	for(int i = 0; i < num_parties; ++i) {
-		    	works.push_back(pool.enqueue([i]() { 
-		    		string ack = "ACK";
-		    		zmq::message_t msg_ack(ack.length());
-		    		memcpy(msg_ack.data(), ack.c_str(), ack.length());
-		    		socket_client[i]->send(msg_ack);
-		    	}));
-		    }
-		    joinNclean(works);
-		}
+            for(int i = 0; i < num_parties; ++i) {
+                works.push_back(pool.enqueue([i]() { 
+                    string ack = "ACK";
+                    zmq::message_t msg_ack(ack.length());
+                    memcpy(msg_ack.data(), ack.c_str(), ack.length());
+                    socket_client[i]->send(msg_ack);
+                }));
+            }
+            joinNclean(works);
+        }
     }
 	
     cout << "[Keyword search] End-to-end latency: " << time_from(start)/n_keyword_search_times << "us" << endl;
