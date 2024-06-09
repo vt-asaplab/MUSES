@@ -102,7 +102,7 @@ Line 181 ```int n_keyword_search_times = 1;``` is to change the number of keywor
 
 Line 74 ```int n_secret_key_update_times = 1;``` is to change the number of permission revocations.\
 Line 255 ```int n_document_update_times = 1;``` is to change the number of document updates.\
-Line 405 ```int n_keyword_search_times = 1;``` is to change the number of keyword search.
+Line 402 ```int n_keyword_search_times = 1;``` is to change the number of keyword search.
 
 Then recompile both Server and Client. 
 
