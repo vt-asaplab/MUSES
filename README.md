@@ -113,12 +113,14 @@ Then recompile both Server and Client.
 If the code is found useful, we would be appreciated if our paper can be cited with the following bibtex format 
 
 ```
-@inproceedings{le2024muses,
-      author = {Tung Le and Rouzbeh Behnia and Jorge Guajardo and Thang Hoang},
-      title = {{MUSES}: Efficient {M}ulti-User {S}earchable {E}ncrypted {D}atabase},
-      year = {2024},
-      url = {https://eprint.iacr.org/2023/720},
-      booktitle = {USENIX Security Symposium 2024},
+@inproceedings {LE2024,
+author = {Le, Tung and Behnia, Rouzbeh and Guajardo, Jorge and  Hoang, Thang},
+title = {{MUSES}: Efficient {M}ulti-User {S}earchable {E}ncrypted {D}atabase},
+booktitle = {33rd USENIX Security Symposium (USENIX Security 24)},
+year = {2024},
+address = {Philadelphia, PA},
+publisher = {USENIX Association},
+month = aug,
 }
 ```
 
