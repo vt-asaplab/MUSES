@@ -113,7 +113,7 @@ Then recompile both Server and Client.
 If the code is found useful, we would be appreciated if our paper can be cited with the following bibtex format 
 
 ```
-@inproceedings {LE2024,
+@inproceedings {le2024muses,
 author = {Le, Tung and Behnia, Rouzbeh and Guajardo, Jorge and  Hoang, Thang},
 title = {{MUSES}: Efficient {M}ulti-User {S}earchable {E}ncrypted {D}atabase},
 booktitle = {33rd USENIX Security Symposium (USENIX Security 24)},
