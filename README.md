@@ -44,7 +44,7 @@ Then launch server 2:
 ```
 ./Server 2 12345
 ```
-The default parameters: Bloom_Filter_Size is 2000, Number_of_Documents is 1024, Number_of_Writers is 5 and Search_Result_Size is 255. 
+The default parameters: Bloom_Filter_Size is 1120, Number_of_Documents is 1024, Number_of_Writers is 1 and Search_Result_Size is 255. 
 
 2. Launch client:
 ```
