@@ -2,7 +2,7 @@
 ![x86](https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/x86/badge.svg)
 ![arm](https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/arm/badge.svg)
 
-<img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/uae/badges.png" width="200">
+<img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/uae/badges.png" width="300">
 
 This is our full implementation for our [MUSES paper](https://eprint.iacr.org/2023/720).
 
