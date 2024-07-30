@@ -131,3 +131,5 @@ month = aug,
 
 # Further Information
 For any inquiries, bugs, and assistance on building and running the code, please contact me at [tungle@vt.edu](mailto:tungle@vt.edu?Subject=[MUSES]%20Inquiry).
+
+<img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/muses/muses_3.jpg" width="300">
