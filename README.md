@@ -115,7 +115,7 @@ Then recompile both Server and Client.
 
 ## Citing
 
-If the code is found useful, we would be appreciated if our paper can be cited with the following bibtex format 
+If the code is found useful, we would be appreciated if our paper can be cited with the following bibtex format: 
 
 ```
 @inproceedings {le2024muses,
