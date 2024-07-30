@@ -1,4 +1,4 @@
-# MUSES: Efficient Multi-User Searchable Encrypted Database <br/> <img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/muses/muses.jpg" width="300">
+# MUSES: Efficient Multi-User Searchable Encrypted Database <br /> <img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/muses/muses.jpg" height="100">
 
 ![x86](https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/x86/badge.svg)
 ![arm](https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/arm/badge.svg)
