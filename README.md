@@ -1,4 +1,5 @@
-# MUSES: Efficient Multi-User Searchable Encrypted Database 
+# MUSES: Efficient Multi-User Searchable Encrypted Database  
+<img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/muses/muses.jpg" width="300">
 
 ![x86](https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/x86/badge.svg)
 ![arm](https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/arm/badge.svg)
@@ -6,7 +7,6 @@
 <img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/uae/badges.png" width="250">
 
 This is our full implementation for our [MUSES paper](https://eprint.iacr.org/2023/720) 
-<img src="https://github.com/vt-asaplab/MUSES/blob/main/MUSES/emp_lib/workflows/muses/muses.jpg" width="300">
 
 **WARNING**: This is an academic proof-of-concept prototype and has not received careful code review. This implementation is NOT ready for production use.
 
